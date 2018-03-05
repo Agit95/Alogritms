@@ -34,19 +34,20 @@ public:
 
 	const Polynom& operator =(const Polynom& obj1)
 	{
-		Polynom& obj = const_cast<Polynom&>(obj1);
+		Node* obj = obj1.m_pRoot;
 		Node* temp_this_root = this->m_pRoot;
-		Node* temp_ptr = obj.m_pRoot;
-		while (obj.m_pRoot/*->m_pNext*/ != nullptr)
+		Node* temp_ptr = obj;
+		while (obj != nullptr)
 		{
-			this->m_pRoot->m_oCoefficient = obj.m_pRoot->m_oCoefficient;
-			this->m_pRoot->m_oExponent = obj.m_pRoot->m_oExponent;
-			this->m_pRoot->m_pNext = obj.m_pRoot->m_pNext;
+			this->m_pRoot->m_oCoefficient = obj->m_oCoefficient;
+			this->m_pRoot->m_oExponent = obj->m_oExponent;
+			this->m_pRoot->m_pNext = obj->m_pNext;
 			this->m_pRoot = this->m_pRoot->m_pNext;
-			obj.m_pRoot = obj.m_pRoot->m_pNext;
+			obj = obj->m_pNext;
 		}
 		this->m_pRoot = temp_this_root;
-		obj.m_pRoot = temp_ptr;
+		obj = temp_ptr;
+
 		return *this;
 	}
 

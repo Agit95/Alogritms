@@ -28,12 +28,17 @@ int main()
 	node->m_oExponent = 6;
 	temp_obj.add_term(node);
 
-	tempobj = tempobj - temp_obj;
+	Polynom temp = tempobj - temp_obj;
 	
+	Polynom temp_1 = tempobj + temp_obj;
 
-		std::cout <<temp_obj << std::endl;
-		std::cout << '\n';
-		std::cout << tempobj << std::endl;
+	std::cout << temp_1 << std::endl;
+	std::cout << '\n';
+	std::cout << temp << std::endl;
+	std::cout << '\n';
+	std::cout << temp_obj << std::endl;
+	std::cout << '\n';
+	std::cout << tempobj << std::endl;
 
 	system("pause");
 	return 0;

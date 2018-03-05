@@ -18,6 +18,9 @@ Polynom::~Polynom()
 
 void Polynom::add_term(Node* t_Node)
 {
+	if (t_Node->m_oCoefficient == 0)
+		return;
+
 	Node* temp_node = new Node();
 	temp_node->m_oCoefficient = t_Node->m_oCoefficient;
 	temp_node->m_oExponent = t_Node->m_oExponent;
@@ -81,103 +84,151 @@ void Polynom::add_term(Node* t_Node)
 
 const Polynom& operator -(const Polynom& obj3,const Polynom& obj1)
 {
-	Polynom& obj2 = const_cast<Polynom&>(obj3);
-	Polynom& obj = const_cast<Polynom&>(obj1);
-	Node* temp_obj_root = obj.m_pRoot;
-	Node* temp_obj2_root = obj2.m_pRoot;
-	while (obj2.m_pRoot != nullptr && obj.m_pRoot != nullptr)
+	Node* obj2 = obj3.m_pRoot;
+	Node* obj = obj1.m_pRoot;
+	Node* temp_obj_root = obj;
+	Node* temp_obj2_root = obj2;
+	Polynom* newobj = new Polynom();
+	while (obj2 != nullptr && obj != nullptr)
 	{
-		if (obj2.m_pRoot->m_oExponent == obj.m_pRoot->m_oExponent)
+		if (obj2->m_oExponent == obj->m_oExponent)
 		{
-			obj2.m_pRoot->m_oCoefficient -= obj.m_pRoot->m_oCoefficient;
-			obj2.m_pRoot = obj2.m_pRoot->m_pNext;
-			obj.m_pRoot = obj.m_pRoot->m_pNext;
+			obj2->m_oCoefficient -= obj->m_oCoefficient;
+			newobj->add_term(obj2);
+			obj2 = obj2->m_pNext;
+			obj = obj->m_pNext;
 		}
-		else if (obj2.m_pRoot->m_oExponent > obj.m_pRoot->m_oExponent)
+		else if (obj2->m_oExponent > obj->m_oExponent)
 		{
 			//poxum enq  nshan@ vorovhetev   nshani popoxutyun  e  linelu
-			obj.m_pRoot->m_oCoefficient = -obj.m_pRoot->m_oCoefficient;
+			obj->m_oCoefficient = -obj->m_oCoefficient;
 
-			obj2.add_term(obj.m_pRoot);
+			newobj->add_term(obj2);
+			newobj->add_term(obj);
 			//obyect@  berum enq  naxkin vichakin
-			obj.m_pRoot->m_oCoefficient = -obj.m_pRoot->m_oCoefficient;
-			obj.m_pRoot = obj.m_pRoot->m_pNext;
+			obj->m_oCoefficient = -obj->m_oCoefficient;
+			obj2 = obj2->m_pNext;
+			obj = obj->m_pNext;
 		}
 		else
 		{
 			//poxum enq  nshan@ vorovhetev   n\ani popoxutyun  e  linelu
-			obj.m_pRoot->m_oCoefficient = -obj.m_pRoot->m_oCoefficient;
+			obj->m_oCoefficient = -obj->m_oCoefficient;
 
-			obj2.add_term(obj.m_pRoot);
+			newobj->add_term(obj2);
+			newobj->add_term(obj);
 			//obyect@  berum enq  naxkin vichakin
-			obj.m_pRoot->m_oCoefficient = -obj.m_pRoot->m_oCoefficient;
-			obj.m_pRoot = obj.m_pRoot->m_pNext;
+			obj->m_oCoefficient = -obj->m_oCoefficient;
+			obj2 = obj2->m_pNext;
+			obj = obj->m_pNext;
 		}
 	}
-	obj2.m_pRoot = temp_obj2_root;
-	obj.m_pRoot = temp_obj_root;
-	return  obj2;
+	//avelacnum  enq  mnacac  ktorner@
+	if (obj2 != nullptr)
+	{
+		while (obj2 != nullptr)
+		{
+			newobj->add_term(obj2);
+			obj2 = obj2->m_pNext;
+		}
+	}
+	else if (obj != nullptr)
+	{
+		while (obj != nullptr)
+		{
+			obj->m_oCoefficient = -obj->m_oCoefficient; 
+			newobj->add_term(obj);
+			obj->m_oCoefficient = -obj->m_oCoefficient;
+			obj = obj->m_pNext;
+		}
+	}
+
+	obj2 = temp_obj2_root;
+	obj = temp_obj_root;
+	return  *newobj;
 }
 
 const Polynom& operator +(const Polynom& obj3,const Polynom& obj1)
 {
-	Polynom& obj2 = const_cast<Polynom&>(obj3);
-	Polynom& obj = const_cast<Polynom&>(obj1);
-	Node* temp_obj2_root = obj2.m_pRoot;
-	Node* temp_obj_root = obj.m_pRoot;
-	while (obj.m_pRoot != nullptr && obj2.m_pRoot != nullptr)
+	Node* obj2 = obj3.m_pRoot;
+	Node* obj = obj1.m_pRoot;
+	Node* temp_obj2_root = obj2;
+	Node* temp_obj_root = obj;
+	
+	Polynom* newobj = new Polynom();
+	while (obj2 != nullptr && obj != nullptr)
 	{
-		if (obj.m_pRoot->m_oExponent == obj2.m_pRoot->m_oExponent)
+		if (obj2->m_oExponent == obj->m_oExponent)
 		{
-			obj.m_pRoot->m_oCoefficient += obj2.m_pRoot->m_oCoefficient;
-			obj.m_pRoot = obj.m_pRoot->m_pNext;
-			obj2.m_pRoot = obj2.m_pRoot->m_pNext;
+			obj2->m_oCoefficient += obj->m_oCoefficient;
+			newobj->add_term(obj2);
+			obj2 = obj2->m_pNext;
+			obj = obj->m_pNext;
 		}
-		else if (obj.m_pRoot->m_oExponent > obj2.m_pRoot->m_oExponent)
+		else if (obj2->m_oExponent > obj->m_oExponent)
 		{
-			obj.add_term(obj2.m_pRoot);
-			obj2.m_pRoot = obj2.m_pRoot->m_pNext;
+			newobj->add_term(obj2);
+			obj2 = obj2->m_pNext;
 		}
 		else
 		{
-			obj.add_term(obj2.m_pRoot);
-			obj2.m_pRoot = obj2.m_pRoot->m_pNext;
+			newobj->add_term(obj);
+			obj = obj->m_pNext;
 		}
 	}
-	obj2.m_pRoot = temp_obj2_root;
-	obj.m_pRoot=temp_obj_root;
-	return obj;
+
+	//avelacnum  enq  mnacac  ktorner@
+	if (obj2 != nullptr)
+	{
+		while (obj2 != nullptr)
+		{
+			newobj->add_term(obj2);
+			obj2 = obj2->m_pNext;
+		}
+	}	 
+	else if (obj != nullptr)
+	{
+		while (obj != nullptr)
+		{
+			newobj->add_term(obj);
+			obj = obj->m_pNext;
+		}
+	}
+
+	obj2 = temp_obj2_root;
+	obj=temp_obj_root;
+	return *newobj;
 }
 
 
 std::ostream& operator<<(std::ostream& output,const Polynom& obj1)
 {
-	Polynom& obj = const_cast<Polynom&>(obj1);
-	Node* temp_ptr = obj.m_pRoot;
-	while(obj.m_pRoot->m_pNext != nullptr)
+	Node* obj = obj1.m_pRoot;
+	Node* temp_ptr = obj;
+	while(obj->m_pNext != nullptr)
 	{
-		if (obj.m_pRoot->m_pNext->m_oCoefficient > 0)
+		if (obj->m_pNext->m_oCoefficient > 0)
 		{
-			if (obj.m_pRoot->m_oCoefficient != 1)
-				output << obj.m_pRoot->m_oCoefficient << "X^" << obj.m_pRoot->m_oExponent << " + ";
+			if (obj->m_oCoefficient != 1)
+				output << obj->m_oCoefficient << "X^" << obj->m_oExponent << " + ";
 			else
-				output << "X^" << obj.m_pRoot->m_oExponent << " + ";
+				output << "X^" << obj->m_oExponent << " + ";
 		}
-		else  if (obj.m_pRoot->m_oCoefficient != -1)
-			output << obj.m_pRoot->m_oCoefficient << "X^" << obj.m_pRoot->m_oExponent << ' ';
+		else  if (obj->m_oCoefficient != -1)
+			output << obj->m_oCoefficient << "X^" << obj->m_oExponent << ' ';
 		else
-			output << "- X^" << obj.m_pRoot->m_oExponent << ' ';
+			output << "- X^" << obj->m_oExponent << ' ';
 
 		//araj enq  talis  cucichy
-		obj.m_pRoot = obj.m_pRoot->m_pNext;
+		obj = obj->m_pNext;
 	}
 	//verjin  tarri  tpum
-	if (obj.m_pRoot->m_oExponent == 1)
-		output << obj.m_pRoot->m_oCoefficient << "X";
+	if (obj->m_oExponent == 1)
+		output << obj->m_oCoefficient << "X";
 	else
-		output << obj.m_pRoot->m_oCoefficient << "X^" << obj.m_pRoot->m_oExponent;
+		output << obj->m_oCoefficient << "X^" << obj->m_oExponent;
 	//cucich@  berum enq  skizb
-	obj.m_pRoot = temp_ptr;
+	obj = temp_ptr;
 
 	return output;
 }
